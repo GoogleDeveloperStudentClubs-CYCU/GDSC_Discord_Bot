@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands, tasks
+import os
 
 def read_token_from_file(file_path):
     with open(file_path, 'r') as f:
@@ -8,9 +9,16 @@ def read_token_from_file(file_path):
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
 
+# 讀入所有 Cog (Extension)
+async def load_cogs():
+    for file in os.listdir("./cogs"):
+        if file.endswith(".py"):
+            await bot.load_extension("cogs." + str(file[:-3]))
+  
 # 當 bot 完全準備好了以後觸發
 @bot.event
 async def on_ready():
+    await load_cogs()
     print(f"We have logged in as {bot.user}")
 
 # 當有新成員加入時觸發
