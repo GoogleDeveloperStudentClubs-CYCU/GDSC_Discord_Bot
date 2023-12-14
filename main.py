@@ -8,7 +8,7 @@ def read_token_from_file(file_path):
 
 intents = discord.Intents.default()
 intents.message_content = True
-bot = commands.Bot(command_prefix="!ELM.", intents=intents)
+bot = commands.Bot(command_prefix="!ELM.", intents=intents, help_command=None)
 
 # 讀入所有 Cog (Extension)
 async def load_cogs():
@@ -52,6 +52,7 @@ async def on_command_error(ctx, error):
         await ctx.send('沒有這個指令欸QQ\n'
           '使用  !ELM.help 查詢現有指令 ~ \n'
         )
+    raise error
 
 # 啟動 bot
 bot_token = read_token_from_file("token.txt")  # 讀取 token
