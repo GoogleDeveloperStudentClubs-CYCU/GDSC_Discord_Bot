@@ -1,59 +1,29 @@
-import discord
-from discord.ext import commands, tasks
-import os
+import interactions
+import logging
+import pkgutil
 
 def read_token_from_file(file_path):
     with open(file_path, 'r') as f:
         return f.read().strip()
 
-intents = discord.Intents.default()
-intents.message_content = True
-bot = commands.Bot(command_prefix="!ELM.", intents=intents, help_command=None)
-
-# 讀入所有 Cog (Extension)
-async def load_cogs():
-    for file in os.listdir("./cogs"):
-        if file.endswith(".py"):
-            await bot.load_extension("cogs." + str(file[:-3]))
+intents = interactions.Intents.ALL
+logging.basicConfig()
+logger = logging.getLogger("")
+logger.setLevel(logging.INFO)
+bot = interactions.Client(intents=intents, logger=logger)
   
 # 當 bot 完全準備好了以後觸發
 @bot.event
 async def on_ready():
-    await load_cogs()
-    print(f"We have logged in as {bot.user}")
-
-# 當有新成員加入時觸發
-@bot.event
-async def on_member_join(member):
-    channel = discord.utils.get(member.guild.channels, name='general')  # 你可以修改這裡以選擇其他頻道
-    if channel:
-        buttons = [
-            discord.Button(label='身份組 1', style=discord.ButtonStyle.primary, custom_id='role_1'),
-            discord.Button(label='身份組 2', style=discord.ButtonStyle.primary, custom_id='role_2')
-        ]
-        action_row = discord.ActionRow(*buttons)
-        await channel.send(f"歡迎 {member.mention}，請選擇你的身份組。", components=[action_row])
-
-# 處理按鈕事件
-@bot.event
-async def on_button_click(interaction):
-    if interaction.custom_id == 'role_1':
-        role = discord.utils.get(interaction.guild.roles, name='Role1')  # 換成你的身份組名稱
-    elif interaction.custom_id == 'role_2':
-        role = discord.utils.get(interaction.guild.roles, name='Role2')  # 換成你的身份組名稱
-
-    if role:
-        await interaction.user.add_roles(role)
-        await interaction.response.send_message(f"你已經被分配到 {role.name} 身份組！", ephemeral=True)
-
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.CommandNotFound):
-        await ctx.send('沒有這個指令欸QQ\n'
-          '使用  !ELM.help 查詢現有指令 ~ \n'
-        )
-    raise error
+    print(f"We have logged in as {bot.user}", flush=True)
 
 # 啟動 bot
-bot_token = read_token_from_file("token.txt")  # 讀取 token
-bot.run(bot_token)
+bot_token = read_token_from_file("token.txt")
+if __name__ == "__main__":
+    extensions = [x.name for x in pkgutil.iter_modules(["cogs"], prefix="cogs.")] # 取得 cogs 資料夾下所有的檔案名稱
+    for extension in extensions: # 載入所有的擴充功能
+        print(f"Loading extension {extension}", flush=True)
+        bot.load_extension(extension)
+    bot.start(bot_token)
+
+

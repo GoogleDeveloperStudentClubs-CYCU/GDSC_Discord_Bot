@@ -1,15 +1,17 @@
-import discord
-from discord.ext import commands, tasks
-from discord import app_commands
+import interactions
+from interactions import slash_command
 import random
 
-class Dice(commands.Cog):
+class Dice(interactions.Extension):
     def __init__(self, bot):
         self.bot = bot
     
-    @app_commands.command(name = "dice") # 新增一個叫做 dice 的 Application command (Slash Command) 
-    async def dice(self, ctx):
-        await ctx.response.send_message(str(random.randint(1,6)))
+    @slash_command(
+        name="dice",
+        description="擲骰子"
+    )
+    async def _dice(self, ctx):
+        await ctx.send(f"擲出了 {random.randint(1, 6)} 點")
         
-async def setup(bot):
-    await bot.add_cog(Dice(bot)) # 把 Dice 這個 Cog 加進 bot
+def setup(bot):
+    Dice(bot)
