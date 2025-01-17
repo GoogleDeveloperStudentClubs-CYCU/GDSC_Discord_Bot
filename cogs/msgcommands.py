@@ -52,12 +52,13 @@ class MsgCommands(interactions.Extension):
         await ctx.send(
           '現有指令:\n'
           '> /dice  : 擲骰子\n'
-          '> /meme  : random meme (if not working , just try it again~ )\n '
-          '> /meow  : 吸吸吸吸吸'
+          '> /meme  : random meme (if not working , just try it again~ )\n'
+          '> /meow  : 吸吸吸吸吸\n'
+          '> /chat <msg> : 與機器人聊天'
           )
         return
     
-    @slash_command(name = "meme", description="傳送一則 meme") # 新增一個叫做 meme 的 command
+    @slash_command(name = "meme", description="傳送一則 meme(Source: Reddit dankmemes)") # 新增一個叫做 meme 的 command
     async def meme(self, ctx: SlashContext):
         embed = interactions.Embed(title="", description="")
         async with aiohttp.ClientSession() as cs:
@@ -70,7 +71,7 @@ class MsgCommands(interactions.Extension):
             await ctx.send(embeds=embed)
             return
             
-    @slash_command(name = "meow", description="傳送一隻貓") # 新增一個叫做 meow 的 command
+    @slash_command(name = "meow", description="傳送一隻貓(Source: Reddit)") # 新增一個叫做 meow 的 command
     async def meow(self, ctx):
         await ctx.defer()  # 延遲回應
         embed = interactions.Embed(title="", description="")
@@ -94,7 +95,7 @@ class MsgCommands(interactions.Extension):
             return
           
     @slash_command(name = "chat", 
-                   description="與機器人聊天",
+                   description="與機器人聊天(Powered by gemini-1.5-pro)",
                     options=[
                       interactions.SlashCommandOption(
                          name="msg",
