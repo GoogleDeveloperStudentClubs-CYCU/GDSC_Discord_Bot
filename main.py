@@ -1,10 +1,10 @@
 import interactions
 import logging
 import pkgutil
+import json
 
-def read_token_from_file(file_path):
-    with open(file_path, 'r') as f:
-        return f.read().strip()
+with open("secrets.json", "r") as f:
+    config = json.load(f)
 
 intents = interactions.Intents.ALL
 logging.basicConfig()
@@ -18,7 +18,7 @@ async def on_ready():
     print(f"We have logged in as {bot.user}", flush=True)
 
 # 啟動 bot
-bot_token = read_token_from_file("token.txt")
+bot_token = config["discord_bot_token"]
 if __name__ == "__main__":
     extensions = [x.name for x in pkgutil.iter_modules(["cogs"], prefix="cogs.")] # 取得 cogs 資料夾下所有的檔案名稱
     for extension in extensions: # 載入所有的擴充功能
