@@ -1,3 +1,4 @@
 # Ignore token key
 /token.txt
 /secrets.json
+/__pycache__
